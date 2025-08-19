@@ -45,13 +45,13 @@ export const storageUtils = {
   },
 
   exportToCSV: (expenses: Expense[]): string => {
-    const headers = ['Date', 'Amount', 'Category', 'Description'];
+    const headers = ['Date', 'Category', 'Amount', 'Description'];
     const csvContent = [
       headers.join(','),
       ...expenses.map(expense => [
         expense.date,
-        expense.amount.toString(),
         expense.category,
+        expense.amount.toString(),
         `"${expense.description.replace(/"/g, '""')}"`
       ].join(','))
     ].join('\n');

@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
-import { TrendingUp, TrendingDown, DollarSign, Calendar, Target } from 'lucide-react';
+import { TrendingUp, TrendingDown, DollarSign, Calendar, Target, Download } from 'lucide-react';
 import { useExpenses } from '@/context/ExpenseContext';
 import { formatCurrency, cn } from '@/lib/utils';
 import { ExpenseCategory } from '@/types/expense';
@@ -18,7 +18,7 @@ const COLORS = {
 };
 
 export function Dashboard() {
-  const { expenses } = useExpenses();
+  const { expenses, exportExpenses } = useExpenses();
 
   const analytics = useMemo(() => {
     const currentDate = new Date();
@@ -92,7 +92,16 @@ export function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <SampleDataButton />
+      <div className="flex justify-between items-center">
+        <SampleDataButton />
+        <button
+          onClick={exportExpenses}
+          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        >
+          <Download className="h-4 w-4 mr-2" />
+          Export Data
+        </button>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center">
