@@ -1,12 +1,13 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
-import { TrendingUp, TrendingDown, DollarSign, Calendar, Target } from 'lucide-react';
+import { TrendingUp, TrendingDown, DollarSign, Calendar, Target, Cloud } from 'lucide-react';
 import { useExpenses } from '@/context/ExpenseContext';
 import { formatCurrency, cn } from '@/lib/utils';
 import { ExpenseCategory } from '@/types/expense';
 import { SampleDataButton } from './SampleDataButton';
+import { CloudExportHub } from './CloudExportHub';
 
 const COLORS = {
   Food: '#10b981',
@@ -19,6 +20,7 @@ const COLORS = {
 
 export function Dashboard() {
   const { expenses } = useExpenses();
+  const [isCloudExportOpen, setIsCloudExportOpen] = useState(false);
 
   const analytics = useMemo(() => {
     const currentDate = new Date();
@@ -92,7 +94,25 @@ export function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <SampleDataButton />
+      <div className="flex items-center justify-between">
+        <SampleDataButton />
+        <button
+          onClick={() => setIsCloudExportOpen(true)}
+          disabled={expenses.length === 0}
+          className={cn(
+            'flex items-center space-x-2 px-6 py-3 rounded-lg font-medium transition-all shadow-lg',
+            expenses.length === 0
+              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 hover:shadow-xl transform hover:scale-105'
+          )}
+        >
+          <Cloud className="h-5 w-5" />
+          <span>Export Hub</span>
+          <div className="bg-white/20 text-xs px-2 py-1 rounded-full">
+            ✨ Cloud
+          </div>
+        </button>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center">
@@ -244,6 +264,12 @@ export function Dashboard() {
           ))}
         </div>
       </div>
+
+      <CloudExportHub
+        isOpen={isCloudExportOpen}
+        onClose={() => setIsCloudExportOpen(false)}
+        expenses={expenses}
+      />
     </div>
   );
 }
