@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Edit2, Trash2, Search, Filter, Download } from 'lucide-react';
+import { Edit2, Trash2, Search, Filter } from 'lucide-react';
 import { ExpenseCategory, ExpenseFilters } from '@/types/expense';
 import { useExpenses } from '@/context/ExpenseContext';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
@@ -10,7 +10,7 @@ import { ExpenseForm } from './ExpenseForm';
 const categories: (ExpenseCategory | 'All')[] = ['All', 'Food', 'Transportation', 'Entertainment', 'Shopping', 'Bills', 'Other'];
 
 export function ExpenseList() {
-  const { filteredExpenses, filters, setFilters, deleteExpense, exportExpenses, isLoading } = useExpenses();
+  const { filteredExpenses, filters, setFilters, deleteExpense, isLoading } = useExpenses();
   const [editingExpense, setEditingExpense] = useState<string | null>(null);
 
   const handleFilterChange = (key: keyof ExpenseFilters, value: string) => {
@@ -40,13 +40,6 @@ export function ExpenseList() {
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
             <h2 className="text-lg font-semibold text-gray-900">Expenses</h2>
-            <button
-              onClick={exportExpenses}
-              className="inline-flex items-center space-x-2 px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              <Download className="h-4 w-4" />
-              <span>Export CSV</span>
-            </button>
           </div>
         </div>
 

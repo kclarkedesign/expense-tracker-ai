@@ -12,7 +12,6 @@ interface ExpenseContextType {
   updateExpense: (expense: Expense) => void;
   deleteExpense: (id: string) => void;
   setFilters: (filters: ExpenseFilters) => void;
-  exportExpenses: () => void;
   isLoading: boolean;
 }
 
@@ -49,18 +48,6 @@ export function ExpenseProvider({ children }: { children: React.ReactNode }) {
     storageUtils.saveExpenses(updatedExpenses);
   };
 
-  const exportExpenses = () => {
-    const csvContent = storageUtils.exportToCSV(filteredExpenses);
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `expenses-${new Date().toISOString().split('T')[0]}.csv`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
-  };
 
   const filteredExpenses = expenses.filter(expense => {
     if (filters.category && filters.category !== 'All' && expense.category !== filters.category) {
@@ -90,7 +77,6 @@ export function ExpenseProvider({ children }: { children: React.ReactNode }) {
         updateExpense,
         deleteExpense,
         setFilters,
-        exportExpenses,
         isLoading,
       }}
     >

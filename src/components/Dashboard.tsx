@@ -1,12 +1,14 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
-import { TrendingUp, TrendingDown, DollarSign, Calendar, Target } from 'lucide-react';
+import { TrendingUp, TrendingDown, DollarSign, Calendar, Target, Download } from 'lucide-react';
 import { useExpenses } from '@/context/ExpenseContext';
 import { formatCurrency, cn } from '@/lib/utils';
-import { ExpenseCategory } from '@/types/expense';
+import { ExpenseCategory, Expense } from '@/types/expense';
 import { SampleDataButton } from './SampleDataButton';
+import { ExportModal } from './ExportModal';
+import { AdvancedExportService, ExportFormat } from '@/lib/export';
 
 const COLORS = {
   Food: '#10b981',
@@ -19,6 +21,7 @@ const COLORS = {
 
 export function Dashboard() {
   const { expenses } = useExpenses();
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   const analytics = useMemo(() => {
     const currentDate = new Date();
@@ -90,9 +93,28 @@ export function Dashboard() {
     ? ((analytics.monthlySpending - analytics.lastMonthSpending) / analytics.lastMonthSpending) * 100
     : 0;
 
+  const handleExport = async (data: Expense[], format: ExportFormat, filename: string) => {
+    await AdvancedExportService.exportExpenses(data, format, filename);
+  };
+
   return (
     <div className="space-y-6">
-      <SampleDataButton />
+      <div className="flex items-center justify-between">
+        <SampleDataButton />
+        <button
+          onClick={() => setIsExportModalOpen(true)}
+          disabled={expenses.length === 0}
+          className={cn(
+            'flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-colors',
+            expenses.length === 0
+              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              : 'bg-blue-600 text-white hover:bg-blue-700'
+          )}
+        >
+          <Download className="h-4 w-4" />
+          <span>Export Data</span>
+        </button>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center">
@@ -244,6 +266,13 @@ export function Dashboard() {
           ))}
         </div>
       </div>
+
+      <ExportModal
+        isOpen={isExportModalOpen}
+        onClose={() => setIsExportModalOpen(false)}
+        expenses={expenses}
+        onExport={handleExport}
+      />
     </div>
   );
 }
